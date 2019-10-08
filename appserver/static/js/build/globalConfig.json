@@ -1,0 +1,535 @@
+{
+    "pages": {
+        "inputs": {
+            "description": "Manage your data inputs", 
+            "table": {
+                "actions": [
+                    "edit", 
+                    "enable", 
+                    "delete", 
+                    "clone"
+                ], 
+                "moreInfo": [
+                    {
+                        "field": "name", 
+                        "label": "Name"
+                    }, 
+                    {
+                        "field": "interval", 
+                        "label": "Interval"
+                    }, 
+                    {
+                        "field": "index", 
+                        "label": "Index"
+                    }, 
+                    {
+                        "field": "disabled", 
+                        "label": "Status"
+                    }, 
+                    {
+                        "field": "organization", 
+                        "label": "Organization"
+                    }
+                ], 
+                "header": [
+                    {
+                        "field": "name", 
+                        "label": "Name"
+                    }, 
+                    {
+                        "field": "interval", 
+                        "label": "Interval"
+                    }, 
+                    {
+                        "field": "index", 
+                        "label": "Index"
+                    }, 
+                    {
+                        "field": "disabled", 
+                        "label": "Status"
+                    }
+                ]
+            }, 
+            "title": "Inputs", 
+            "services": [
+                {
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "required": true, 
+                            "label": "Name", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores.", 
+                                    "type": "regex", 
+                                    "pattern": "^[a-zA-Z]\\w*$"
+                                }, 
+                                {
+                                    "maxLength": 100, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "help": "Enter a unique name for the data input"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "required": true, 
+                            "label": "Interval", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Interval must be an integer.", 
+                                    "type": "regex", 
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$"
+                                }
+                            ], 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "field": "index", 
+                            "defaultValue": "default", 
+                            "label": "Index", 
+                            "type": "singleSelect", 
+                            "validators": [
+                                {
+                                    "maxLength": 80, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "options": {
+                                "createSearchChoice": true, 
+                                "endpointUrl": "data/indexes", 
+                                "blackList": "^_.*$"
+                            }, 
+                            "required": true
+                        }, 
+                        {
+                            "field": "organization", 
+                            "required": true, 
+                            "label": "Organization", 
+                            "type": "singleSelect", 
+                            "options": {
+                                "referenceName": "account"
+                            }, 
+                            "help": ""
+                        }
+                    ], 
+                    "title": "Azure DevOps Approvals", 
+                    "name": "azure_devops_approvals"
+                }, 
+                {
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "required": true, 
+                            "label": "Name", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores.", 
+                                    "type": "regex", 
+                                    "pattern": "^[a-zA-Z]\\w*$"
+                                }, 
+                                {
+                                    "maxLength": 100, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "help": "Enter a unique name for the data input"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "required": true, 
+                            "label": "Interval", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Interval must be an integer.", 
+                                    "type": "regex", 
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$"
+                                }
+                            ], 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "field": "index", 
+                            "defaultValue": "default", 
+                            "label": "Index", 
+                            "type": "singleSelect", 
+                            "validators": [
+                                {
+                                    "maxLength": 80, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "options": {
+                                "createSearchChoice": true, 
+                                "endpointUrl": "data/indexes", 
+                                "blackList": "^_.*$"
+                            }, 
+                            "required": true
+                        }, 
+                        {
+                            "field": "organization", 
+                            "required": true, 
+                            "label": "Organization", 
+                            "type": "singleSelect", 
+                            "options": {
+                                "referenceName": "account"
+                            }, 
+                            "help": ""
+                        }
+                    ], 
+                    "title": "Azure DevOps Projects List", 
+                    "name": "azure_devops_projects"
+                }, 
+                {
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "required": true, 
+                            "label": "Name", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores.", 
+                                    "type": "regex", 
+                                    "pattern": "^[a-zA-Z]\\w*$"
+                                }, 
+                                {
+                                    "maxLength": 100, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "help": "Enter a unique name for the data input"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "required": true, 
+                            "label": "Interval", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Interval must be an integer.", 
+                                    "type": "regex", 
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$"
+                                }
+                            ], 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "field": "index", 
+                            "defaultValue": "default", 
+                            "label": "Index", 
+                            "type": "singleSelect", 
+                            "validators": [
+                                {
+                                    "maxLength": 80, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "options": {
+                                "createSearchChoice": true, 
+                                "endpointUrl": "data/indexes", 
+                                "blackList": "^_.*$"
+                            }, 
+                            "required": true
+                        }, 
+                        {
+                            "field": "organization", 
+                            "required": true, 
+                            "label": "Organization", 
+                            "type": "singleSelect", 
+                            "options": {
+                                "referenceName": "account"
+                            }, 
+                            "help": ""
+                        }
+                    ], 
+                    "title": "Azure DevOps Deployments", 
+                    "name": "azure_devops_deployments"
+                }, 
+                {
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "required": true, 
+                            "label": "Name", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores.", 
+                                    "type": "regex", 
+                                    "pattern": "^[a-zA-Z]\\w*$"
+                                }, 
+                                {
+                                    "maxLength": 100, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "help": "Enter a unique name for the data input"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "required": true, 
+                            "label": "Interval", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Interval must be an integer.", 
+                                    "type": "regex", 
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$"
+                                }
+                            ], 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "field": "index", 
+                            "defaultValue": "default", 
+                            "label": "Index", 
+                            "type": "singleSelect", 
+                            "validators": [
+                                {
+                                    "maxLength": 80, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "options": {
+                                "createSearchChoice": true, 
+                                "endpointUrl": "data/indexes", 
+                                "blackList": "^_.*$"
+                            }, 
+                            "required": true
+                        }, 
+                        {
+                            "field": "organization", 
+                            "required": true, 
+                            "label": "Organization", 
+                            "type": "singleSelect", 
+                            "options": {
+                                "referenceName": "account"
+                            }, 
+                            "help": ""
+                        }
+                    ], 
+                    "title": "Azure DevOps Releases", 
+                    "name": "azure_devops_releases"
+                }, 
+                {
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "required": true, 
+                            "label": "Name", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores.", 
+                                    "type": "regex", 
+                                    "pattern": "^[a-zA-Z]\\w*$"
+                                }, 
+                                {
+                                    "maxLength": 100, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "help": "Enter a unique name for the data input"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "required": true, 
+                            "label": "Interval", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Interval must be an integer.", 
+                                    "type": "regex", 
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$"
+                                }
+                            ], 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "field": "index", 
+                            "defaultValue": "default", 
+                            "label": "Index", 
+                            "type": "singleSelect", 
+                            "validators": [
+                                {
+                                    "maxLength": 80, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "options": {
+                                "createSearchChoice": true, 
+                                "endpointUrl": "data/indexes", 
+                                "blackList": "^_.*$"
+                            }, 
+                            "required": true
+                        }, 
+                        {
+                            "field": "organization", 
+                            "required": true, 
+                            "label": "Organization", 
+                            "type": "singleSelect", 
+                            "options": {
+                                "referenceName": "account"
+                            }, 
+                            "help": ""
+                        }
+                    ], 
+                    "title": "Azure DevOps Release Definitions", 
+                    "name": "azure_devops_release_definitions"
+                }
+            ]
+        }, 
+        "configuration": {
+            "description": "Set up your add-on", 
+            "tabs": [
+                {
+                    "table": {
+                        "actions": [
+                            "edit", 
+                            "delete", 
+                            "clone"
+                        ], 
+                        "header": [
+                            {
+                                "field": "name", 
+                                "label": "Account name"
+                            }, 
+                            {
+                                "field": "username", 
+                                "label": "Organization"
+                            }
+                        ]
+                    }, 
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "required": true, 
+                            "label": "Account name", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "maxLength": 50, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of Account name should be between 1 and 50"
+                                }, 
+                                {
+                                    "errorMsg": "Account name must start with a letter and followed by alphabetic letters, digits or underscores.", 
+                                    "type": "regex", 
+                                    "pattern": "^[a-zA-Z]\\w*$"
+                                }
+                            ], 
+                            "help": "Enter a unique name for this account."
+                        }, 
+                        {
+                            "field": "username", 
+                            "required": true, 
+                            "label": "Organization", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "maxLength": 200, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of organization should be between 1 and 200"
+                                }
+                            ], 
+                            "options": {
+                                "placeholder": "Enter the organization here"
+                            }, 
+                            "help": "Enter the organization for this account."
+                        }, 
+                        {
+                            "field": "password", 
+                            "encrypted": true, 
+                            "label": "Personal Access Token", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "maxLength": 8192, 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "errorMsg": "Length of personal access token should be between 1 and 8192"
+                                }
+                            ], 
+                            "required": true, 
+                            "help": "Enter the personal access token for this account."
+                        }
+                    ], 
+                    "title": "Account", 
+                    "name": "account"
+                }, 
+                {
+                    "entity": [
+                        {
+                            "field": "loglevel", 
+                            "options": {
+                                "disableSearch": true, 
+                                "autoCompleteFields": [
+                                    {
+                                        "label": "DEBUG", 
+                                        "value": "DEBUG"
+                                    }, 
+                                    {
+                                        "label": "INFO", 
+                                        "value": "INFO"
+                                    }, 
+                                    {
+                                        "label": "WARNING", 
+                                        "value": "WARNING"
+                                    }, 
+                                    {
+                                        "label": "ERROR", 
+                                        "value": "ERROR"
+                                    }, 
+                                    {
+                                        "label": "CRITICAL", 
+                                        "value": "CRITICAL"
+                                    }
+                                ]
+                            }, 
+                            "label": "Log level", 
+                            "type": "singleSelect", 
+                            "defaultValue": "INFO"
+                        }
+                    ], 
+                    "title": "Logging", 
+                    "name": "logging"
+                }
+            ], 
+            "title": "Configuration"
+        }
+    }, 
+    "meta": {
+        "restRoot": "TA_azure_devops_release", 
+        "displayName": "Azure DevOps Release Add-On", 
+        "version": "2.0.0", 
+        "name": "TA-azure-devops-release", 
+        "apiVersion": "3.0.0"
+    }
+}
