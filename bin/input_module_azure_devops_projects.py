@@ -39,26 +39,35 @@ def collect_events(helper, ew):
     headers = {'Content-Type': 'application/json',
             'Authorization': api_authorization }
 
-    # REST Endpoint [Projects - List]
-    endpoint_projects_list = 'https://dev.azure.com/' + opt_organization + '/_apis/projects' + '?' + api_version
+    continuationToken = 0
 
-    # HTTP GET [Projects - List]
-    response_projects_list = requests.get(endpoint_projects_list, headers=headers)
+    while continuationToken != None:
 
-    # HTTP GET Request Error Handling
-    if response_projects_list.status_code != 200:
-        # This means something went wrong.
-        raise Exception('Status Code {}'.format(response_projects_list.status_code))
+        # REST Endpoint [Projects - List]
+        endpoint_projects_list = 'https://dev.azure.com/' + opt_organization + '/_apis/projects' + '?' + api_version
 
-    # Store Response as a JSON Dict Object
-    projects_list = response_projects_list.json()
+        if continuationToken != None:
+            endpoint_projects_list = endpoint_projects_list + '&continuationToken=' + str(continuationToken)
+            
+        # HTTP GET [Projects - List]
+        response_projects_list = requests.get(endpoint_projects_list, headers=headers)
 
-    # Loop Through the Projects Under the Organization
-    for project in projects_list["value"]:
-        
-        # Serialize the JSON Dict Object
-        data_project = json.dumps(project)
+        # HTTP GET Request Error Handling
+        if response_projects_list.status_code != 200:
+            # This means something went wrong.
+            raise Exception('Status Code {}'.format(response_projects_list.status_code))
 
-        # Save and Write the Serialized Object
-        event = helper.new_event(data_project, time=datetime.now(), host='https://vsrm.dev.azure.com', index=helper.get_output_index(), sourcetype=helper.get_sourcetype(), source=opt_organization, done=True, unbroken=True)
-        ew.write_event(event)
+        # Store Response as a JSON Dict Object
+        projects_list = response_projects_list.json()
+
+        continuationToken = response_projects_list.headers.get('x-ms-continuationtoken')
+
+        # Loop Through the Projects Under the Organization
+        for project in projects_list["value"]:
+            
+            # Serialize the JSON Dict Object
+            data_project = json.dumps(project)
+
+            # Save and Write the Serialized Object
+            event = helper.new_event(data_project, time=datetime.now(), host='https://vsrm.dev.azure.com', index=helper.get_output_index(), sourcetype=helper.get_sourcetype(), source=opt_organization, done=True, unbroken=True)
+            ew.write_event(event)

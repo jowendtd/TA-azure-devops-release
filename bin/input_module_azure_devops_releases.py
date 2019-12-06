@@ -57,42 +57,54 @@ def collect_events(helper, ew):
     for project in projects["value"]:
         project_name = project["name"]
 
-        # REST Endpoint [Release - Releases - List]
-        endpoint_release_releases = 'https://vsrm.dev.azure.com/' + opt_organization + '/' + project_name + '/_apis/release/releases' + '?' + api_version
+        continuationToken = 0
 
-        # HTTP GET Request Error Handling
-        try:
-            # HTTP GET 
-            response_release_releases = requests.get(endpoint_release_releases, headers=headers)
+        while continuationToken != None:
 
-            # Store Response as a JSON Dict Object
-            release_releases = response_release_releases.json()
+            # REST Endpoint [Release - Releases - List]
+            endpoint_release_releases = 'https://vsrm.dev.azure.com/' + opt_organization + '/' + project_name + '/_apis/release/releases' + '?' + api_version
 
-        except:
-            # HTTP GET Request Error Handling
-            helper.log_error('Status Code :' + response_release_releases.status_code)
-
-        for release in release_releases["value"]:
-            releaseID = release["id"]
-
-            # REST Endpoint [Release - Releases - Get Release]
-            endpoint_release_getrelease = 'https://vsrm.dev.azure.com/' + opt_organization + '/' + project_name + '/_apis/release/releases/' + str(releaseID) + '?' + api_version
+            if continuationToken != None:
+                endpoint_release_releases = endpoint_release_releases + '&continuationToken=' + str(continuationToken)
 
             # HTTP GET Request Error Handling
             try:
                 # HTTP GET 
-                response_release_getrelease = requests.get(endpoint_release_getrelease, headers=headers)
-
-                # Store Response as a JSON Dict Object
-                release_getrelease = response_release_getrelease.json()
-
-                # Serialize the JSON Dict Object
-                data_release_getrelease = json.dumps(release_getrelease)
-                
-                # Save and Write the Serialized Object
-                event = helper.new_event(data_release_getrelease, time=datetime.now(), host='https://vsrm.dev.azure.com', index=helper.get_output_index(), sourcetype=helper.get_sourcetype(), source=opt_organization + ':' + project_name, done=True, unbroken=True)
-                ew.write_event(event)
+                response_release_releases = requests.get(endpoint_release_releases, headers=headers)
 
             except:
                 # HTTP GET Request Error Handling
-                helper.log_error('Status Code :' + response_release_getrelease.status_code)
+                helper.log_error('Status Code :' + response_release_releases.status_code)
+
+            else:
+
+                # Store Response as a JSON Dict Object
+                release_releases = response_release_releases.json()
+
+                continuationToken = response_release_releases.headers.get('x-ms-continuationtoken')
+
+                for release in release_releases["value"]:
+                    releaseID = release["id"]
+
+                    # REST Endpoint [Release - Releases - Get Release]
+                    endpoint_release_getrelease = 'https://vsrm.dev.azure.com/' + opt_organization + '/' + project_name + '/_apis/release/releases/' + str(releaseID) + '?' + api_version
+
+                    # HTTP GET Request Error Handling
+                    try:
+                        # HTTP GET 
+                        response_release_getrelease = requests.get(endpoint_release_getrelease, headers=headers)
+
+                    except:
+                        # HTTP GET Request Error Handling
+                        helper.log_error('Status Code :' + response_release_getrelease.status_code)
+
+                    else:
+                        # Store Response as a JSON Dict Object
+                        release_getrelease = response_release_getrelease.json()
+
+                        # Serialize the JSON Dict Object
+                        data_release_getrelease = json.dumps(release_getrelease)
+                        
+                        # Save and Write the Serialized Object
+                        event = helper.new_event(data_release_getrelease, time=datetime.now(), host='https://vsrm.dev.azure.com', index=helper.get_output_index(), sourcetype=helper.get_sourcetype(), source=opt_organization + ':' + project_name, done=True, unbroken=True)
+                        ew.write_event(event)

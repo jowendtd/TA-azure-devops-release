@@ -57,42 +57,55 @@ def collect_events(helper, ew):
     for project in projects["value"]:
         project_name = project["name"]
 
-        # REST Endpoint [Release - Definitions - List]
-        endpoint_release_definitions = 'https://vsrm.dev.azure.com/' + opt_organization + '/' + project_name + '/_apis/release/definitions' + '?' + api_version
+        continuationToken = 0
 
-        # HTTP GET Request Error Handling
-        try:
-            # HTTP GET 
-            response_release_definitions = requests.get(endpoint_release_definitions, headers=headers)
+        while continuationToken != None:
 
-            # Store Response as a JSON Dict Object
-            release_definitions = response_release_definitions.json()
+            # REST Endpoint [Release - Definitions - List]
+            endpoint_release_definitions = 'https://vsrm.dev.azure.com/' + opt_organization + '/' + project_name + '/_apis/release/definitions' + '?' + api_version
 
-        except:
-            # HTTP GET Request Error Handling
-            helper.log_error('Status Code :' + response_release_definitions.status_code)
-
-        for definition in release_definitions["value"]:
-            definitionID = definition["id"]
-
-            # REST Endpoint [Release - Definitions - Get]
-            endpoint_release_getdefinition = 'https://vsrm.dev.azure.com/' + opt_organization + '/' + project_name + '/_apis/release/definitions/' + str(definitionID) + '?' + api_version
+            if continuationToken != None:
+                endpoint_release_definitions = endpoint_release_definitions + '&continuationToken=' + str(continuationToken)
 
             # HTTP GET Request Error Handling
             try:
                 # HTTP GET 
-                response_release_getdefinition = requests.get(endpoint_release_getdefinition, headers=headers)
-
-                # Store Response as a JSON Dict Object
-                release_getdefinition = response_release_getdefinition.json()
-
-                # Serialize the JSON Dict Object
-                data_release_getdefinition = json.dumps(release_getdefinition)
-                
-                # Save and Write the Serialized Object
-                event = helper.new_event(data_release_getdefinition, time=datetime.now(), host='https://vsrm.dev.azure.com', index=helper.get_output_index(), sourcetype=helper.get_sourcetype(), source=opt_organization + ':' + project_name, done=True, unbroken=True)
-                ew.write_event(event)
+                response_release_definitions = requests.get(endpoint_release_definitions, headers=headers)
 
             except:
                 # HTTP GET Request Error Handling
-                helper.log_error('Status Code :' + response_release_getdefinition.status_code)
+                helper.log_error('Status Code :' + response_release_definitions.status_code)
+
+            else:
+
+                # Store Response as a JSON Dict Object
+                release_definitions = response_release_definitions.json()
+
+                continuationToken = response_release_definitions.headers.get('x-ms-continuationtoken')
+            
+                for definition in release_definitions["value"]:
+                    definitionID = definition["id"]
+
+                    # REST Endpoint [Release - Definitions - Get]
+                    endpoint_release_getdefinition = 'https://vsrm.dev.azure.com/' + opt_organization + '/' + project_name + '/_apis/release/definitions/' + str(definitionID) + '?' + api_version
+
+                    # HTTP GET Request Error Handling
+                    try:
+                        # HTTP GET 
+                        response_release_getdefinition = requests.get(endpoint_release_getdefinition, headers=headers)
+
+                    except:
+                        # HTTP GET Request Error Handling
+                        helper.log_error('Status Code :' + response_release_getdefinition.status_code)
+
+                    else:
+
+                        # Store Response as a JSON Dict Object
+                        release_getdefinition = response_release_getdefinition.json()
+
+                        # Serialize the JSON Dict Object
+                        data_release_getdefinition = json.dumps(release_getdefinition)
+                        
+                        # Save and Write the Serialized Object
+                        event = helper.new_event(data_release_getdefinition, time=datetime.now(), host='https://vsrm.dev.azure.com', index=helper.get_output_index(), sourcetype=helper.get_sourcetype(), source=opt_organization + ':' + project_name, done=True, unbroken=True)
+                        ew.write_event(event)

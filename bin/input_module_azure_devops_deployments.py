@@ -47,7 +47,6 @@ def collect_events(helper, ew):
 
     # HTTP GET Request Error Handling
     if response_projects_list.status_code != 200:
-        # This means something went wrong.
         raise Exception('Status Code {}'.format(response_projects_list.status_code))
 
     # Store Response as a JSON Dict Object
@@ -57,26 +56,37 @@ def collect_events(helper, ew):
     for project in projects_list["value"]:
         project_name = project["name"]
 
-        # REST Endpoint [Release - Deployments - List]
-        endpoint_deployments_list = 'https://vsrm.dev.azure.com/' + str(opt_organization) + '/' + project_name + '/_apis/release/deployments' + '?' + api_version
+        continuationToken = 0
 
-        # HTTP GET Request Error Handling
-        try:
-            # HTTP GET [Release - Deployments - List]
-            response_deployments_list = requests.get(endpoint_deployments_list, headers=headers)
+        while continuationToken != None:
 
-            # Store Response as a JSON Dict Object
-            deployments_list = response_deployments_list.json()
-
-            for deployment in deployments_list["value"]:
-
-                # Serialize the JSON Dict Object
-                data_deployment = json.dumps(deployment)
+            # REST Endpoint [Release - Deployments - List]
+            endpoint_deployments_list = 'https://vsrm.dev.azure.com/' + str(opt_organization) + '/' + project_name + '/_apis/release/deployments' + '?' + api_version
             
-                # Save and Write the Serialized Object
-                event = helper.new_event(data_deployment, time=datetime.now(), host='https://vsrm.dev.azure.com', index=helper.get_output_index(), sourcetype=helper.get_sourcetype(), source=opt_organization + ':' + project_name, done=True, unbroken=True)
-                ew.write_event(event)
-
-        except:
+            if continuationToken != None:
+                endpoint_deployments_list = endpoint_deployments_list + '&continuationToken=' + str(continuationToken)
+            
             # HTTP GET Request Error Handling
-            helper.log_error('Status Code :' + str(response_deployments_list.status_code))
+            try:
+                # HTTP GET [Release - Deployments - List]
+                response_deployments_list = requests.get(endpoint_deployments_list, headers=headers)
+
+            except:
+                # HTTP GET Request Error Handling
+                helper.log_error('Status Code :' + str(response_deployments_list.status_code))
+
+            else:
+
+                # Store Response as a JSON Dict Object
+                deployments_list = response_deployments_list.json()
+
+                continuationToken = response_deployments_list.headers.get('x-ms-continuationtoken')
+
+                for deployment in deployments_list["value"]:
+
+                    # Serialize the JSON Dict Object
+                    data_deployment = json.dumps(deployment)
+                
+                    # Save and Write the Serialized Object
+                    event = helper.new_event(data_deployment, time=datetime.now(), host='https://vsrm.dev.azure.com', index=helper.get_output_index(), sourcetype=helper.get_sourcetype(), source=opt_organization + ':' + project_name, done=True, unbroken=True)
+                    ew.write_event(event)

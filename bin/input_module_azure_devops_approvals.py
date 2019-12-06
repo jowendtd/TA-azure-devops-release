@@ -57,24 +57,36 @@ def collect_events(helper, ew):
     for project in projects_list["value"]:
         project_name = project["name"]
 
-        # REST Endpoint [Release - Approvals - List]
-        endpoint_approvals_list = 'https://vsrm.dev.azure.com/' + opt_organization + '/' + project_name + '/_apis/release/approvals' + '?' + api_version
-
-        # HTTP GET Request Error Handling
-        try:
-            # HTTP GET [Release - Approvals - List]
-            response_approvals_list = requests.get(endpoint_approvals_list, headers=headers)
-
-            # Store Response as a JSON Dict Object
-            approvals_list = response_approvals_list.json()
-
-            # Serialize the JSON Dict Object
-            data_approvals_list = json.dumps(approvals_list)
+        continuationToken = 0
+        
+        while continuationToken != None:
             
-            # Save and Write the Serialized Object
-            event = helper.new_event(data_approvals_list, time=datetime.now(), host='https://vsrm.dev.azure.com', index=helper.get_output_index(), sourcetype=helper.get_sourcetype(), source=opt_organization + ':' + project_name, done=True, unbroken=True)
-            ew.write_event(event)
+            # REST Endpoint [Release - Approvals - List]
+            endpoint_approvals_list = 'https://vsrm.dev.azure.com/' + opt_organization + '/' + project_name + '/_apis/release/approvals' + '?' + api_version
 
-        except:
+            if continuationToken != None:
+                endpoint_approvals_list = endpoint_approvals_list + '&continuationToken=' + str(continuationToken)
+
             # HTTP GET Request Error Handling
-            helper.log_error('Status Code :' + response_approvals_list.status_code)
+            try:
+                # HTTP GET [Release - Approvals - List]
+                response_approvals_list = requests.get(endpoint_approvals_list, headers=headers)
+
+            except:
+                # HTTP GET Request Error Handling
+                helper.log_error('Status Code :' + response_approvals_list.status_code)
+
+            else:
+                # Store Response as a JSON Dict Object
+                approvals_list = response_approvals_list.json()
+
+                continuationToken = response_approvals_list.headers.get('x-ms-continuationtoken')
+
+                # Serialize the JSON Dict Object
+                data_approvals_list = json.dumps(approvals_list)
+                
+                # Write event if number of JSON events is > 0
+                if int(approvals_list['count']) > 0:
+                    # Save and Write the Serialized Object
+                    event = helper.new_event(data_approvals_list, time=datetime.now(), host='https://vsrm.dev.azure.com', index=helper.get_output_index(), sourcetype=helper.get_sourcetype(), source=opt_organization + ':' + project_name, done=True, unbroken=True)
+                    ew.write_event(event)
